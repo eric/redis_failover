@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH << File.expand_path('..', __FILE__)
+
+require 'zookeeper_manager'
+require 'redis_manager'
+
+config = YAML::load_file(File.expand_path("../config.yml", __FILE__))
+
+begin
+  puts "Starting #{config['zookeepers']} zookeepers"
+  zookeeper_manager = ZookeeperManager.new(config['zookeepers'])
+
+  puts "Starting #{config['redis']} redises"
+  redis_manager = RedisManager.new(config['redis'])
+ensure
+  puts "Shutting down"
+  zookeeper_manager.shutdown
+  redis_manager.shutdown
+end
